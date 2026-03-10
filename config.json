@@ -1,0 +1,12 @@
+{
+    "mascota_actual": "gato",
+    "skin_actual": "normal",
+    "tamano": "mediano",
+    "puntos": 0,
+    "siempre_encima": true,
+    "skins_desbloqueadas": {
+        "gato": false,
+        "cactus": false,
+        "pato": false
+    }
+}
