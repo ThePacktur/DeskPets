@@ -8,8 +8,9 @@ Convierte tus clics y tu actividad de teclado en puntos, desbloquea skins especi
 
 ## ✨ ¿Qué ofrece DeskPets?
 
-- **3 mascotas únicas**: Gato, Cactus y Pato.
+- **3 mascotas únicas**: **Kaliko (gato)**, Cactus y Pato.
 - **Animación continua** por frames para dar sensación de vida.
+- **Kaliko con sprites PNG** (despierto + modo dormido con 3 poses).
 - **Sistema de puntos global**:
   - +1 por cada click sobre la mascota.
   - +1 por cada tecla presionada (captura global).
@@ -41,38 +42,46 @@ Convierte tus clics y tu actividad de teclado en puntos, desbloquea skins especi
 ## 📁 Estructura del proyecto
 
 - `main.py` → Arranque de app, ventana principal, interacción, persistencia.
-- `mascotas.py` → Clases de mascotas y generación de animaciones por frames.
+- `mascotas.py` → Clases de mascotas y generación/carga de animaciones por frames.
 - `contador.py` → Sistema de puntos global.
 - `skins.py` → Gestión de skins y desbloqueo por umbral.
 - `config.json` → Preferencias y progreso del usuario.
+- `assets/kaliko/` → Carpeta de sprites PNG de Kaliko.
+
+---
+
+## 🐱 Integración de Kaliko (sprites)
+
+Coloca los PNG en `assets/kaliko/` con estos nombres exactos:
+
+- `kaliko_idle.png`
+- `kaliko_sleep_1.png`
+- `kaliko_sleep_2.png`
+- `kaliko_sleep_3.png`
+
+Si no están presentes, la app usa un dibujo interno de respaldo para el gato.
 
 ---
 
 ## 🚀 Instalación y ejecución
 
-### 1) Clonar o descargar
-
-Descarga el proyecto en una carpeta local.
-
-### 2) Crear entorno virtual (recomendado)
-
 ```bash
 python -m venv .venv
 ```
 
-Activar en Windows (PowerShell):
+En Windows PowerShell:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-### 3) Instalar dependencias
+Instalar dependencias:
 
 ```bash
 pip install PySide6 pynput
 ```
 
-### 4) Ejecutar
+Ejecutar:
 
 ```bash
 python main.py
@@ -80,36 +89,8 @@ python main.py
 
 ---
 
-## 🛠️ Personalización y escalabilidad
-
-DeskPets está diseñado para crecer fácilmente:
-
-- Puedes añadir nuevas mascotas extendiendo la lógica en `mascotas.py`.
-- Puedes crear más skins reutilizando el sistema de `skins.py`.
-- Puedes modificar el umbral de desbloqueo desde `skins.py` (`UMBRAL_DESBLOQUEO`).
-- Puedes ajustar mensajes, tiempos de animación y comportamiento de inactividad en `main.py`.
-
----
-
 ## 💼 Enfoque comercial
 
-DeskPets es ideal para:
+DeskPets es ideal para usuarios que quieren personalizar su escritorio sin consumir muchos recursos, creadores de contenido y equipos que buscan una experiencia más agradable.
 
-- Usuarios que quieren personalizar su escritorio sin consumir muchos recursos.
-- Streamers y creadores de contenido que buscan identidad visual en pantalla.
-- Equipos de trabajo que desean una experiencia más agradable durante largas jornadas.
-
-Su diseño modular permite evolucionar rápidamente hacia ediciones premium con:
-
-- Packs de skins temáticos.
-- Mascotas coleccionables.
-- Eventos de temporada.
-- Integraciones con productividad/gamificación.
-
----
-
-## 📌 Nota
-
-La función de inicio automático con Windows puede agregarse como extensión futura (registro o acceso directo en carpeta de inicio), manteniendo la app base limpia y liviana.
-
-¡Disfruta tu DeskPet! 🐾
+Su arquitectura modular permite crecer fácilmente con packs de skins, mascotas coleccionables, eventos de temporada e integraciones de gamificación.

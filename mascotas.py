@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List, Tuple
 
-from PySide6.QtCore import QPoint, QRect
+from PySide6.QtCore import QPoint, QRect, Qt
 from PySide6.QtGui import QColor, QPainter, QPen, QPixmap
 
 TIPOS_MASCOTA = ("gato", "cactus", "pato")
@@ -14,6 +15,14 @@ TAMANOS = {
     "mediano": 128,
     "grande": 168,
 }
+
+ASSETS_KALIKO = Path(__file__).with_name("assets") / "kaliko"
+KALIKO_IDLE = ASSETS_KALIKO / "kaliko_idle.png"
+KALIKO_SLEEP = [
+    ASSETS_KALIKO / "kaliko_sleep_1.png",
+    ASSETS_KALIKO / "kaliko_sleep_2.png",
+    ASSETS_KALIKO / "kaliko_sleep_3.png",
+]
 
 
 def _canvas(size: int) -> QPixmap:
@@ -28,7 +37,18 @@ def _pen() -> QPen:
     return pen
 
 
-def _draw_cat(p: QPainter, skin: str, frame: int, size: int) -> None:
+def _scaled_sprite(path: Path, size: int) -> QPixmap | None:
+    """Carga un sprite PNG y lo escala al tamaño de la mascota."""
+    if not path.exists():
+        return None
+    pix = QPixmap(str(path))
+    if pix.isNull():
+        return None
+    return pix.scaled(size, size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+
+def _draw_cat_fallback(p: QPainter, skin: str, frame: int, size: int) -> None:
+    """Dibujo de respaldo si no existen los PNG de Kaliko."""
     base = QColor("#f6b26b") if skin == "normal" else QColor("#d8a7ff")
     belly = QColor("#ffe6cc") if skin == "normal" else QColor("#efe0ff")
 
@@ -116,10 +136,11 @@ class MascotaFrames:
 
 
 class FabricaMascotas:
-    """Generador en memoria de sprites simples estilo pixel/cartoon."""
+    """Generador de sprites: usa PNG para Kaliko y dibujo para otras mascotas."""
 
     def __init__(self) -> None:
         self._cache: Dict[Tuple[str, str, str], MascotaFrames] = {}
+        self._sleep_cache: Dict[Tuple[str, str], MascotaFrames] = {}
 
     def obtener_frames(self, mascota: str, skin: str, tamano: str) -> List[QPixmap]:
         clave = (mascota, skin, tamano)
@@ -129,21 +150,53 @@ class FabricaMascotas:
         size = TAMANOS[tamano]
         frames: List[QPixmap] = []
 
-        for frame in range(3):
-            pixmap = _canvas(size)
-            painter = QPainter(pixmap)
-            painter.setRenderHint(QPainter.Antialiasing)
-            painter.setPen(_pen())
-
-            if mascota == "gato":
-                _draw_cat(painter, skin, frame, size)
-            elif mascota == "cactus":
-                _draw_cactus(painter, skin, frame, size)
+        if mascota == "gato":
+            # Kaliko despierto: mismo frame repetido para mantener ritmo de animación.
+            kaliko = _scaled_sprite(KALIKO_IDLE, size)
+            if kaliko is not None:
+                frames = [kaliko, kaliko, kaliko]
             else:
-                _draw_duck(painter, skin, frame, size)
+                for frame in range(3):
+                    pixmap = _canvas(size)
+                    painter = QPainter(pixmap)
+                    painter.setRenderHint(QPainter.Antialiasing)
+                    painter.setPen(_pen())
+                    _draw_cat_fallback(painter, skin, frame, size)
+                    painter.end()
+                    frames.append(pixmap)
+        else:
+            for frame in range(3):
+                pixmap = _canvas(size)
+                painter = QPainter(pixmap)
+                painter.setRenderHint(QPainter.Antialiasing)
+                painter.setPen(_pen())
 
-            painter.end()
-            frames.append(pixmap)
+                if mascota == "cactus":
+                    _draw_cactus(painter, skin, frame, size)
+                else:
+                    _draw_duck(painter, skin, frame, size)
+
+                painter.end()
+                frames.append(pixmap)
 
         self._cache[clave] = MascotaFrames(frames=frames)
+        return frames
+
+    def obtener_frames_dormido(self, mascota: str, tamano: str) -> List[QPixmap]:
+        """Retorna animación dormida de Kaliko (si hay sprites disponibles)."""
+        clave = (mascota, tamano)
+        if clave in self._sleep_cache:
+            return self._sleep_cache[clave].frames
+
+        if mascota != "gato":
+            return []
+
+        size = TAMANOS[tamano]
+        frames: List[QPixmap] = []
+        for path in KALIKO_SLEEP:
+            pix = _scaled_sprite(path, size)
+            if pix is not None:
+                frames.append(pix)
+
+        self._sleep_cache[clave] = MascotaFrames(frames=frames)
         return frames

@@ -14,7 +14,7 @@ from PySide6.QtWidgets import QApplication, QLabel, QMainWindow, QMenu
 from pynput import keyboard
 
 from contador import ContadorPuntos
-from mascotas import FabricaMascotas, TAMANOS, TIPOS_MASCOTA
+from mascotas import FabricaMascotas, TIPOS_MASCOTA
 from skins import GestorSkins
 
 CONFIG_PATH = Path(__file__).with_name("config.json")
@@ -154,9 +154,11 @@ class DeskPetWindow(QMainWindow):
 
     def _load_frames(self) -> None:
         self.frames = self.fabrica.obtener_frames(self.mascota_actual, self.skins.skin_actual, self.tamano_actual)
+        self.sleep_frames = self.fabrica.obtener_frames_dormido(self.mascota_actual, self.tamano_actual)
 
     def refresh_ui(self) -> None:
-        pix = self.frames[self.frame_index % len(self.frames)]
+        source_frames = self.sleep_frames if self.is_sleeping and self.sleep_frames else self.frames
+        pix = source_frames[self.frame_index % len(source_frames)]
         self.pet_label.setPixmap(pix)
         self.pet_label.resize(pix.size())
         self.resize(pix.size())
@@ -167,7 +169,7 @@ class DeskPetWindow(QMainWindow):
         self.update()
 
     def next_frame(self) -> None:
-        self.frame_index = (self.frame_index + 1) % len(self.frames)
+        self.frame_index += 1
         self.refresh_ui()
 
     def add_point_click(self) -> None:
@@ -182,11 +184,7 @@ class DeskPetWindow(QMainWindow):
     def post_point_update(self) -> None:
         unlocked_now = self.skins.actualizar_por_puntos(self.contador.obtener())
         if unlocked_now:
-            self.showMessage(
-                "DeskPets",
-                "🎉 ¡Desbloqueaste skins especiales para Gato, Cactus y Pato!",
-                5000,
-            )
+            self.setToolTip("🎉 ¡Desbloqueaste skins especiales para Gato, Cactus y Pato!")
         self.is_sleeping = False
         self.sleep_timer.start(25000)
         self.refresh_ui()
@@ -249,6 +247,7 @@ class DeskPetWindow(QMainWindow):
         self.mascota_actual = mascota
         if not self.skins.puede_usar(mascota, self.skins.skin_actual):
             self.skins.skin_actual = "normal"
+        self.is_sleeping = False
         self._load_frames()
         self.refresh_ui()
 
