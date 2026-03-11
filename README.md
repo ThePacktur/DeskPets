@@ -7,6 +7,8 @@ Convierte tus clics y tu actividad de teclado en puntos, desbloquea skins especi
 ---
 
 ## ✨ ¿Qué ofrece DeskPets?
+![gifpets](https://github.com/user-attachments/assets/18f7693c-eca8-44f6-9b9d-d3ee4d60ddee)
+
 
 - **3 mascotas únicas**: **Kaliko (gato)**, Cactus y Pato.
 - **Animación continua** por frames para dar sensación de vida.
