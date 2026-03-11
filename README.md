@@ -57,7 +57,7 @@ Coloca los PNG en `assets/kaliko/` con estos nombres exactos:
 - `kaliko_idle.png`
 - `kaliko_sleep_1.png`
 - `kaliko_sleep_2.png`
-- `kaliko_sleep_3.png`
+- `kaliko_Idle1.png`
 
 Si no están presentes, la app usa un dibujo interno de respaldo para el gato.
 

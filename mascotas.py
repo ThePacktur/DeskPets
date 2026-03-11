@@ -21,7 +21,7 @@ KALIKO_IDLE = ASSETS_KALIKO / "kaliko_idle.png"
 KALIKO_SLEEP = [
     ASSETS_KALIKO / "kaliko_sleep_1.png",
     ASSETS_KALIKO / "kaliko_sleep_2.png",
-    ASSETS_KALIKO / "kaliko_sleep_3.png",
+    ASSETS_KALIKO / "kaliko_idle1",
 ]
 
 
