@@ -94,3 +94,54 @@ python main.py
 DeskPets es ideal para usuarios que quieren personalizar su escritorio sin consumir muchos recursos, creadores de contenido y equipos que buscan una experiencia más agradable.
 
 Su arquitectura modular permite crecer fácilmente con packs de skins, mascotas coleccionables, eventos de temporada e integraciones de gamificación.
+
+---
+
+## 🏗️ Crear ejecutable + instalador (Windows)
+
+### 1) Generar ejecutable
+
+Desde PowerShell en la raíz del proyecto:
+
+```powershell
+./scripts/build_windows.ps1 -Clean
+```
+
+Esto genera:
+
+- `dist/DeskPets/DeskPets.exe` (ejecutable)
+- `dist/DeskPets/app/` (código fuente editable que usa el ejecutable)
+
+> DeskPets.exe está preparado para ejecutar `app/main.py` en cada inicio.
+> Si editas `app/*.py` dentro de la instalación, los cambios se aplican al reiniciar la app.
+
+### 2) Crear instalador `.exe` (Inno Setup)
+
+1. Instala **Inno Setup 6**.
+2. Abre `installer/DeskPets.iss`.
+3. Compila el script (`Build -> Compile`).
+
+Resultado esperado:
+
+- `dist/DeskPets-Installer.exe`
+
+### 3) Flujo para aplicar cambios de código en una app ya instalada
+
+La instalación queda en:
+
+- `%LOCALAPPDATA%\DeskPets\app`
+
+Opciones:
+
+- Editar directamente los `.py` en esa carpeta, y reiniciar DeskPets.
+- O sincronizar desde este repo con:
+
+```powershell
+./scripts/sync_installed_code.ps1
+```
+
+Si instalaste en otra ruta:
+
+```powershell
+./scripts/sync_installed_code.ps1 -InstallPath "D:\Apps\DeskPets"
+```
